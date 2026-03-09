@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Cloud Player</title>
+    <title>SpotCloud - Seu Player</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
@@ -12,12 +12,11 @@
     <div class="container">
         <nav class="sidebar">
             <div class="logo">
-                <i class="fab fa-spotify"></i> <span>CloudMusic</span>
+                <i class="fab fa-spotify invert-icon"></i> <span>SpotCloud</span>
             </div>
             <ul>
                 <li class="active"><i class="fas fa-home"></i> Início</li>
                 <li><i class="fas fa-search"></i> Buscar</li>
-                <li><i class="fas fa-book"></i> Sua Biblioteca</li>
             </ul>
             
             <div class="add-music">
@@ -32,16 +31,14 @@
             <header>
                 <h1>Sua Playlist</h1>
             </header>
-            
-            <div id="playlist" class="playlist">
-                </div>
+            <div id="playlist" class="playlist"></div>
         </main>
     </div>
 
     <footer class="player-bar">
         <div class="now-playing">
             <div class="song-info">
-                <p id="current-title">Nenhuma música tocando</p>
+                <p id="current-title">Nenhuma música</p>
                 <small id="current-artist">Selecione uma faixa</small>
             </div>
         </div>
@@ -53,13 +50,13 @@
                 <button onclick="nextSong()"><i class="fas fa-step-forward"></i></button>
             </div>
             <div class="progress-container">
-                <input type="range" id="progress" value="0" max="100">
+                <input type="range" id="progress" value="0" max="100" oninput="seek()">
             </div>
         </div>
 
         <div class="volume-control">
             <i class="fas fa-volume-up"></i>
-            <input type="range" id="volume" value="100" max="100">
+            <input type="range" id="volume" value="100" max="100" oninput="changeVolume()">
         </div>
     </footer>
 
