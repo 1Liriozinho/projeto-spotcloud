@@ -3,7 +3,10 @@ let currentSongIndex = 0;
 const audio = document.getElementById('audio-player');
 const playIcon = document.getElementById('play-icon');
 
-// Carregar playlist ao iniciar
+// Configuração importante para links externos
+audio.crossOrigin = "anonymous";
+audio.preload = "auto";
+
 window.onload = () => renderPlaylist();
 
 function addMusic() {
@@ -12,18 +15,17 @@ function addMusic() {
 
     if (!title || !url) return alert("Preencha o nome e o link!");
 
-    // Lógica aprimorada para conversão de Google Drive
+    // Conversão otimizada para Google Drive
     if (url.includes("drive.google.com")) {
-        // Essa expressão regular captura o ID do arquivo de qualquer formato de link do Drive
         const fileId = url.match(/[-\w]{25,}/);
         if (fileId && fileId[0]) {
-            // Formato de link direto para streaming que ignora a página de aviso do Google
+            // Usando o endpoint 'uc' que é o mais estável para streaming
             url = `https://docs.google.com/uc?export=open&id=${fileId[0]}`;
         }
     }
 
     songs.push({ title, url });
-    localStorage.setItem('myPlaylist', JSON.stringify(songs)); // Salva no navegador
+    localStorage.setItem('myPlaylist', JSON.stringify(songs));
     renderPlaylist();
     
     document.getElementById('songTitle').value = '';
@@ -53,16 +55,25 @@ function removeSong(event, index) {
 function playSong(index) {
     if (!songs[index]) return;
     currentSongIndex = index;
+    
+    // Resetar o player antes de carregar nova música
+    audio.pause();
     audio.src = songs[index].url;
+    audio.load(); // Força o carregamento do novo link
+    
     document.getElementById('current-title').innerText = songs[index].title;
     
-    // Tenta dar o play e trata possíveis erros de link quebrado
-    audio.play().catch(error => {
-        console.error("Erro ao tocar música:", error);
-        alert("Não foi possível carregar esta música. Verifique se o link está correto e público.");
-    });
-    
-    playIcon.className = "fas fa-pause-circle";
+    // O Play agora só acontece quando o navegador confirma que consegue tocar
+    audio.oncanplay = () => {
+        audio.play();
+        playIcon.className = "fas fa-pause-circle";
+    };
+
+    audio.onerror = () => {
+        console.error("Erro ao carregar o áudio. Link pode estar quebrado ou bloqueado por CORS.");
+        alert("O link desta música não permite reprodução externa ou está quebrado.");
+        playIcon.className = "fas fa-play-circle";
+    };
 }
 
 function togglePlay() {
@@ -102,3 +113,7 @@ audio.ontimeupdate = () => {
     if (audio.duration) {
         const progress = (audio.currentTime / audio.duration) * 100;
         document.getElementById('progress').value = progress || 0;
+    }
+};
+
+audio.onended = () => nextSong();
