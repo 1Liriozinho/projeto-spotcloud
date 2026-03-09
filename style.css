@@ -1,13 +1,14 @@
 :root {
-    --bg-black: #000;
+    --bg-black: #080808;
     --bg-dark: #121212;
-    --spotify-green: #1DB954;
+    --primary-purple: #8a2be2;
     --text-gray: #b3b3b3;
+    --player-purple: #1a0a2e;
 }
 
 body {
     margin: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Segoe UI', sans-serif;
     background-color: var(--bg-black);
     color: white;
     overflow: hidden;
@@ -18,7 +19,6 @@ body {
     height: 90vh;
 }
 
-/* Sidebar */
 .sidebar {
     width: 240px;
     background-color: #000;
@@ -28,9 +28,17 @@ body {
 }
 
 .logo {
-    font-size: 24px;
+    font-size: 26px;
+    font-weight: bold;
     margin-bottom: 30px;
-    color: white;
+    color: var(--primary-purple);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.invert-icon {
+    transform: rotate(180deg);
 }
 
 .sidebar ul {
@@ -39,10 +47,10 @@ body {
 }
 
 .sidebar li {
-    padding: 10px 0;
+    padding: 12px 0;
     color: var(--text-gray);
     cursor: pointer;
-    transition: 0.3s;
+    font-weight: 600;
 }
 
 .sidebar li:hover, .sidebar li.active {
@@ -51,23 +59,27 @@ body {
 
 .add-music {
     margin-top: auto;
-    background: #282828;
+    background: #181818;
     padding: 15px;
-    border-radius: 8px;
+    border-radius: 10px;
+    border: 1px solid #333;
 }
+
+.add-music h3 { font-size: 14px; margin-bottom: 10px; }
 
 .add-music input {
     width: 90%;
     margin-bottom: 10px;
-    background: #3e3e3e;
-    border: none;
+    background: #282828;
+    border: 1px solid #444;
     padding: 8px;
     color: white;
-    border-radius: 4px;
+    border-radius: 5px;
 }
 
 .add-music button {
-    background: var(--spotify-green);
+    background: var(--primary-purple);
+    color: white;
     border: none;
     padding: 10px;
     width: 100%;
@@ -76,54 +88,40 @@ body {
     cursor: pointer;
 }
 
-/* Main Content */
 .main-content {
     flex: 1;
-    background: linear-gradient(to bottom, #222, var(--bg-dark));
+    background: linear-gradient(to bottom, #2d134d, var(--bg-dark));
     padding: 20px;
     overflow-y: auto;
-}
-
-.playlist {
-    margin-top: 20px;
 }
 
 .song-item {
     display: flex;
     justify-content: space-between;
-    padding: 10px;
+    padding: 12px;
     border-radius: 5px;
     cursor: pointer;
+    margin-bottom: 5px;
 }
 
-.song-item:hover {
-    background-color: rgba(255,255,255,0.1);
-}
+.song-item:hover { background-color: rgba(255,255,255,0.1); }
 
-/* Player Bar */
 .player-bar {
     height: 10vh;
-    background-color: #181818;
-    border-top: 1px solid #282828;
+    background-color: var(--player-purple);
+    border-top: 2px solid var(--primary-purple);
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 0 20px;
 }
 
-.play-btn {
-    font-size: 35px;
-    background: none;
-    border: none;
-    color: white;
-    cursor: pointer;
-}
+.play-btn { font-size: 35px; background: none; border: none; color: white; cursor: pointer; }
 
-.progress-container {
-    width: 400px;
-}
+.progress-container { width: 450px; }
 
-#progress {
+#progress, #volume {
     width: 100%;
-    accent-color: var(--spotify-green);
+    accent-color: var(--primary-purple);
+    cursor: pointer;
 }
