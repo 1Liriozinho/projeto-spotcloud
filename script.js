@@ -3,7 +3,7 @@ let currentSongIndex = 0;
 const audio = document.getElementById('audio-player');
 const playIcon = document.getElementById('play-icon');
 
-// Configurações para permitir tocar de servidores externos
+
 audio.crossOrigin = "anonymous";
 
 window.onload = () => renderPlaylist();
