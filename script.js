@@ -11,11 +11,11 @@ function addMusic() {
 
     if (!title || !url) return alert("Preencha o nome e o link!");
 
-    // Conversão de Link do Google Drive
+   
     if (url.includes("drive.google.com")) {
         const fileId = url.match(/[-\w]{25,}/);
         if (fileId) {
-            // Link que tenta forçar o streaming direto
+         
             url = `https://docs.google.com/uc?export=open&id=${fileId[0]}`;
         }
     }
