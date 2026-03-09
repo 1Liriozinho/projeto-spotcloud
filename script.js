@@ -12,9 +12,14 @@ function addMusic() {
 
     if (!title || !url) return alert("Preencha o nome e o link!");
 
+    // Lógica aprimorada para conversão de Google Drive
     if (url.includes("drive.google.com")) {
+        // Essa expressão regular captura o ID do arquivo de qualquer formato de link do Drive
         const fileId = url.match(/[-\w]{25,}/);
-        if (fileId) url = `https://docs.google.com/uc?export=download&id=${fileId[0]}`;
+        if (fileId && fileId[0]) {
+            // Formato de link direto para streaming que ignora a página de aviso do Google
+            url = `https://docs.google.com/uc?export=open&id=${fileId[0]}`;
+        }
     }
 
     songs.push({ title, url });
@@ -46,10 +51,17 @@ function removeSong(event, index) {
 }
 
 function playSong(index) {
+    if (!songs[index]) return;
     currentSongIndex = index;
     audio.src = songs[index].url;
     document.getElementById('current-title').innerText = songs[index].title;
-    audio.play();
+    
+    // Tenta dar o play e trata possíveis erros de link quebrado
+    audio.play().catch(error => {
+        console.error("Erro ao tocar música:", error);
+        alert("Não foi possível carregar esta música. Verifique se o link está correto e público.");
+    });
+    
     playIcon.className = "fas fa-pause-circle";
 }
 
@@ -77,6 +89,7 @@ function prevSong() {
 }
 
 function seek() {
+    if (!audio.duration) return;
     const seekTo = audio.duration * (document.getElementById('progress').value / 100);
     audio.currentTime = seekTo;
 }
@@ -86,32 +99,6 @@ function changeVolume() {
 }
 
 audio.ontimeupdate = () => {
-    const progress = (audio.currentTime / audio.duration) * 100;
-    document.getElementById('progress').value = progress || 0;
-};
-
-audio.onended = () => nextSong();
-
-function addMusic() {
-    const title = document.getElementById('songTitle').value;
-    let url = document.getElementById('songUrl').value;
-
-    if (!title || !url) return alert("Preencha o nome e o link!");
-
-    // Nova lógica de conversão para Google Drive
-    if (url.includes("drive.google.com")) {
-        // Extrai o ID do arquivo do link
-        const fileId = url.match(/[-\w]{25,}/);
-        if (fileId) {
-            // Usamos o link de 'preview' que o navegador aceita melhor para streaming
-            url = `https://drive.google.com/uc?id=${fileId[0]}&export=open`;
-        }
-    }
-
-    songs.push({ title, url });
-    localStorage.setItem('myPlaylist', JSON.stringify(songs));
-    renderPlaylist();
-    
-    document.getElementById('songTitle').value = '';
-    document.getElementById('songUrl').value = '';
-}
+    if (audio.duration) {
+        const progress = (audio.currentTime / audio.duration) * 100;
+        document.getElementById('progress').value = progress || 0;
