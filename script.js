@@ -1,11 +1,7 @@
-let songs = JSON.parse(localStorage.getItem('myPlaylist')) || [];
+let songs = JSON.parse(localStorage.getItem('spotCloudPlaylist')) || [];
 let currentSongIndex = 0;
 const audio = document.getElementById('audio-player');
 const playIcon = document.getElementById('play-icon');
-
-// Configuração importante para links externos
-audio.crossOrigin = "anonymous";
-audio.preload = "auto";
 
 window.onload = () => renderPlaylist();
 
@@ -15,17 +11,17 @@ function addMusic() {
 
     if (!title || !url) return alert("Preencha o nome e o link!");
 
-    // Conversão otimizada para Google Drive
+    // Conversão de Link do Google Drive
     if (url.includes("drive.google.com")) {
         const fileId = url.match(/[-\w]{25,}/);
-        if (fileId && fileId[0]) {
-            // Usando o endpoint 'uc' que é o mais estável para streaming
+        if (fileId) {
+            // Link que tenta forçar o streaming direto
             url = `https://docs.google.com/uc?export=open&id=${fileId[0]}`;
         }
     }
 
     songs.push({ title, url });
-    localStorage.setItem('myPlaylist', JSON.stringify(songs));
+    localStorage.setItem('spotCloudPlaylist', JSON.stringify(songs));
     renderPlaylist();
     
     document.getElementById('songTitle').value = '';
@@ -45,35 +41,20 @@ function renderPlaylist() {
     });
 }
 
-function removeSong(event, index) {
-    event.stopPropagation();
-    songs.splice(index, 1);
-    localStorage.setItem('myPlaylist', JSON.stringify(songs));
-    renderPlaylist();
-}
-
 function playSong(index) {
-    if (!songs[index]) return;
+    if (songs.length === 0) return;
     currentSongIndex = index;
+    const song = songs[index];
     
-    // Resetar o player antes de carregar nova música
-    audio.pause();
-    audio.src = songs[index].url;
-    audio.load(); // Força o carregamento do novo link
+    audio.src = song.url;
+    document.getElementById('current-title').innerText = song.title;
     
-    document.getElementById('current-title').innerText = songs[index].title;
-    
-    // O Play agora só acontece quando o navegador confirma que consegue tocar
-    audio.oncanplay = () => {
-        audio.play();
+    audio.play().then(() => {
         playIcon.className = "fas fa-pause-circle";
-    };
-
-    audio.onerror = () => {
-        console.error("Erro ao carregar o áudio. Link pode estar quebrado ou bloqueado por CORS.");
-        alert("O link desta música não permite reprodução externa ou está quebrado.");
-        playIcon.className = "fas fa-play-circle";
-    };
+    }).catch(err => {
+        console.error("Erro ao tocar:", err);
+        alert("O Google Drive ou o servidor bloqueou o acesso direto. Verifique se o link é público.");
+    });
 }
 
 function togglePlay() {
@@ -85,6 +66,13 @@ function togglePlay() {
         audio.pause();
         playIcon.className = "fas fa-play-circle";
     }
+}
+
+function removeSong(event, index) {
+    event.stopPropagation();
+    songs.splice(index, 1);
+    localStorage.setItem('spotCloudPlaylist', JSON.stringify(songs));
+    renderPlaylist();
 }
 
 function nextSong() {
