@@ -91,3 +91,27 @@ audio.ontimeupdate = () => {
 };
 
 audio.onended = () => nextSong();
+
+function addMusic() {
+    const title = document.getElementById('songTitle').value;
+    let url = document.getElementById('songUrl').value;
+
+    if (!title || !url) return alert("Preencha o nome e o link!");
+
+    // Nova lógica de conversão para Google Drive
+    if (url.includes("drive.google.com")) {
+        // Extrai o ID do arquivo do link
+        const fileId = url.match(/[-\w]{25,}/);
+        if (fileId) {
+            // Usamos o link de 'preview' que o navegador aceita melhor para streaming
+            url = `https://drive.google.com/uc?id=${fileId[0]}&export=open`;
+        }
+    }
+
+    songs.push({ title, url });
+    localStorage.setItem('myPlaylist', JSON.stringify(songs));
+    renderPlaylist();
+    
+    document.getElementById('songTitle').value = '';
+    document.getElementById('songUrl').value = '';
+}
