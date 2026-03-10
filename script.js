@@ -1,31 +1,39 @@
-let songs = JSON.parse(localStorage.getItem('spotCloudPlaylist')) || [];
+let songs = [];
 let currentSongIndex = 0;
 const audio = document.getElementById('audio-player');
 const playIcon = document.getElementById('play-icon');
 
-window.onload = () => renderPlaylist();
+// Se você for usar o npoint.io, coloque o link aqui. 
+// Se for usar o arquivo local do GitHub, mantenha 'playlist.json'.
+const PLAYLIST_SOURCE = 'playlist.json'; 
 
-function addMusic() {
-    const title = document.getElementById('songTitle').value;
-    let url = document.getElementById('songUrl').value;
+audio.crossOrigin = "anonymous";
 
-    if (!title || !url) return alert("Preencha o nome e o link!");
+window.onload = () => {
+    fetch(PLAYLIST_SOURCE)
+        .then(response => response.json())
+        .then(data => {
+            // Converte todos os links da lista para o formato direto do Dropbox
+            songs = data.map(song => ({
+                ...song,
+                url: convertDropboxLink(song.url)
+            }));
+            renderPlaylist();
+        })
+        .catch(err => {
+            console.error("Erro ao carregar playlist:", err);
+        });
+};
 
-   
-    if (url.includes("drive.google.com")) {
-        const fileId = url.match(/[-\w]{25,}/);
-        if (fileId) {
-         
-            url = `https://docs.google.com/uc?export=open&id=${fileId[0]}`;
-        }
+// Função Mestra: Transforma link de "página" em link de "arquivo bruto"
+function convertDropboxLink(url) {
+    if (url.includes("dropbox.com")) {
+        return url
+            .replace("www.dropbox.com", "dl.dropboxusercontent.com")
+            .replace("?dl=0", "?raw=1")
+            .replace("?dl=1", "?raw=1");
     }
-
-    songs.push({ title, url });
-    localStorage.setItem('spotCloudPlaylist', JSON.stringify(songs));
-    renderPlaylist();
-    
-    document.getElementById('songTitle').value = '';
-    document.getElementById('songUrl').value = '';
+    return url;
 }
 
 function renderPlaylist() {
@@ -34,8 +42,11 @@ function renderPlaylist() {
     songs.forEach((song, index) => {
         container.innerHTML += `
             <div class="song-item" onclick="playSong(${index})">
-                <span><i class="fas fa-music" style="margin-right:10px"></i> ${song.title}</span>
-                <button onclick="removeSong(event, ${index})" style="background:none; border:none; color:gray; cursor:pointer"><i class="fas fa-trash"></i></button>
+                <div class="song-info-list">
+                    <i class="fas fa-music"></i>
+                    <span>${song.title}</span>
+                </div>
+                <i class="fas fa-play-circle play-item-icon"></i>
             </div>
         `;
     });
@@ -52,8 +63,8 @@ function playSong(index) {
     audio.play().then(() => {
         playIcon.className = "fas fa-pause-circle";
     }).catch(err => {
-        console.error("Erro ao tocar:", err);
-        alert("O Google Drive ou o servidor bloqueou o acesso direto. Verifique se o link é público.");
+        console.error("Erro no Dropbox:", err);
+        alert("O Dropbox bloqueou o acesso ou o link expirou. Verifique se o arquivo é público.");
     });
 }
 
@@ -66,13 +77,6 @@ function togglePlay() {
         audio.pause();
         playIcon.className = "fas fa-play-circle";
     }
-}
-
-function removeSong(event, index) {
-    event.stopPropagation();
-    songs.splice(index, 1);
-    localStorage.setItem('spotCloudPlaylist', JSON.stringify(songs));
-    renderPlaylist();
 }
 
 function nextSong() {
@@ -89,8 +93,7 @@ function prevSong() {
 
 function seek() {
     if (!audio.duration) return;
-    const seekTo = audio.duration * (document.getElementById('progress').value / 100);
-    audio.currentTime = seekTo;
+    audio.currentTime = audio.duration * (document.getElementById('progress').value / 100);
 }
 
 function changeVolume() {
@@ -99,8 +102,7 @@ function changeVolume() {
 
 audio.ontimeupdate = () => {
     if (audio.duration) {
-        const progress = (audio.currentTime / audio.duration) * 100;
-        document.getElementById('progress').value = progress || 0;
+        document.getElementById('progress').value = (audio.currentTime / audio.duration) * 100;
     }
 };
 
