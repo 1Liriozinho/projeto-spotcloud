@@ -3,35 +3,39 @@ let currentSongIndex = 0;
 const audio = document.getElementById('audio-player');
 const playIcon = document.getElementById('play-icon');
 
-// Se você for usar o npoint.io, coloque o link aqui. 
-// Se for usar o arquivo local do GitHub, mantenha 'playlist.json'.
-const PLAYLIST_SOURCE = 'playlist.json'; 
-
+// Configuração de segurança para tocar de servidores externos
 audio.crossOrigin = "anonymous";
+
+const PLAYLIST_SOURCE = 'playlist.json'; 
 
 window.onload = () => {
     fetch(PLAYLIST_SOURCE)
         .then(response => response.json())
         .then(data => {
-            // Converte todos os links da lista para o formato direto do Dropbox
             songs = data.map(song => ({
                 ...song,
                 url: convertDropboxLink(song.url)
             }));
             renderPlaylist();
         })
-        .catch(err => {
-            console.error("Erro ao carregar playlist:", err);
-        });
+        .catch(err => console.error("Erro ao carregar playlist:", err));
 };
 
-// Função Mestra: Transforma link de "página" em link de "arquivo bruto"
+// FUNÇÃO ATUALIZADA PARA O NOVO FORMATO DO DROPBOX
 function convertDropboxLink(url) {
     if (url.includes("dropbox.com")) {
-        return url
-            .replace("www.dropbox.com", "dl.dropboxusercontent.com")
-            .replace("?dl=0", "?raw=1")
-            .replace("?dl=1", "?raw=1");
+        let directUrl = url
+            .replace("www.dropbox.com", "dl.dropboxusercontent.com") // Servidor de conteúdo
+            .replace(/\?dl=0|\?dl=1/, ""); // Remove o parâmetro de download padrão
+
+        // Se o link já tiver outros parâmetros (como rlkey ou st), 
+        // garantimos que o raw=1 seja adicionado corretamente
+        if (directUrl.includes("?")) {
+            directUrl = directUrl.replace(/\?/, "?raw=1&");
+        } else {
+            directUrl += "?raw=1";
+        }
+        return directUrl;
     }
     return url;
 }
@@ -63,8 +67,8 @@ function playSong(index) {
     audio.play().then(() => {
         playIcon.className = "fas fa-pause-circle";
     }).catch(err => {
-        console.error("Erro no Dropbox:", err);
-        alert("O Dropbox bloqueou o acesso ou o link expirou. Verifique se o arquivo é público.");
+        console.error("Erro no link:", err);
+        alert("O servidor bloqueou o acesso. Verifique se o link do Dropbox está configurado como 'Qualquer pessoa com o link pode visualizar'.");
     });
 }
 
