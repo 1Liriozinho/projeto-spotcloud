@@ -1,43 +1,30 @@
-let songs = [];
+let songs = JSON.parse(localStorage.getItem('spotCloudPlaylist')) || [];
 let currentSongIndex = 0;
 const audio = document.getElementById('audio-player');
 const playIcon = document.getElementById('play-icon');
 
-// Configuração de segurança para tocar de servidores externos
-audio.crossOrigin = "anonymous";
+window.onload = () => renderPlaylist();
 
-const PLAYLIST_SOURCE = 'playlist.json'; 
+function addMusic() {
+    const title = document.getElementById('songTitle').value;
+    let url = document.getElementById('songUrl').value;
 
-window.onload = () => {
-    fetch(PLAYLIST_SOURCE)
-        .then(response => response.json())
-        .then(data => {
-            songs = data.map(song => ({
-                ...song,
-                url: convertDropboxLink(song.url)
-            }));
-            renderPlaylist();
-        })
-        .catch(err => console.error("Erro ao carregar playlist:", err));
-};
+    if (!title || !url) return alert("Preencha o nome e o link!");
 
-// FUNÇÃO ATUALIZADA PARA O NOVO FORMATO DO DROPBOX
-function convertDropboxLink(url) {
-    if (url.includes("dropbox.com")) {
-        let directUrl = url
-            .replace("www.dropbox.com", "dl.dropboxusercontent.com") // Servidor de conteúdo
-            .replace(/\?dl=0|\?dl=1/, ""); // Remove o parâmetro de download padrão
-
-        // Se o link já tiver outros parâmetros (como rlkey ou st), 
-        // garantimos que o raw=1 seja adicionado corretamente
-        if (directUrl.includes("?")) {
-            directUrl = directUrl.replace(/\?/, "?raw=1&");
-        } else {
-            directUrl += "?raw=1";
+    if (url.includes("drive.google.com")) {
+        const fileId = url.match(/[-\w]{25,}/);
+        if (fileId) {
+       
+            url = `https://docs.google.com/uc?export=open&id=${fileId[0]}`;
         }
-        return directUrl;
     }
-    return url;
+
+    songs.push({ title, url });
+    localStorage.setItem('spotCloudPlaylist', JSON.stringify(songs));
+    renderPlaylist();
+    
+    document.getElementById('songTitle').value = '';
+    document.getElementById('songUrl').value = '';
 }
 
 function renderPlaylist() {
@@ -46,11 +33,8 @@ function renderPlaylist() {
     songs.forEach((song, index) => {
         container.innerHTML += `
             <div class="song-item" onclick="playSong(${index})">
-                <div class="song-info-list">
-                    <i class="fas fa-music"></i>
-                    <span>${song.title}</span>
-                </div>
-                <i class="fas fa-play-circle play-item-icon"></i>
+                <span><i class="fas fa-music" style="margin-right:10px"></i> ${song.title}</span>
+                <button onclick="removeSong(event, ${index})" style="background:none; border:none; color:gray; cursor:pointer"><i class="fas fa-trash"></i></button>
             </div>
         `;
     });
@@ -67,8 +51,8 @@ function playSong(index) {
     audio.play().then(() => {
         playIcon.className = "fas fa-pause-circle";
     }).catch(err => {
-        console.error("Erro no link:", err);
-        alert("O servidor bloqueou o acesso. Verifique se o link do Dropbox está configurado como 'Qualquer pessoa com o link pode visualizar'.");
+        console.error("Erro ao tocar:", err);
+        alert("O Google Drive ou o servidor bloqueou o acesso direto. Verifique se o link é público.");
     });
 }
 
@@ -81,6 +65,13 @@ function togglePlay() {
         audio.pause();
         playIcon.className = "fas fa-play-circle";
     }
+}
+
+function removeSong(event, index) {
+    event.stopPropagation();
+    songs.splice(index, 1);
+    localStorage.setItem('spotCloudPlaylist', JSON.stringify(songs));
+    renderPlaylist();
 }
 
 function nextSong() {
@@ -97,7 +88,8 @@ function prevSong() {
 
 function seek() {
     if (!audio.duration) return;
-    audio.currentTime = audio.duration * (document.getElementById('progress').value / 100);
+    const seekTo = audio.duration * (document.getElementById('progress').value / 100);
+    audio.currentTime = seekTo;
 }
 
 function changeVolume() {
@@ -106,7 +98,8 @@ function changeVolume() {
 
 audio.ontimeupdate = () => {
     if (audio.duration) {
-        document.getElementById('progress').value = (audio.currentTime / audio.duration) * 100;
+        const progress = (audio.currentTime / audio.duration) * 100;
+        document.getElementById('progress').value = progress || 0;
     }
 };
 
