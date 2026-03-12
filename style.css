@@ -1,63 +1,41 @@
-:root {
-    --bg-black: #080808;
-    --bg-dark: #121212;
-    --primary-purple: #8a2be2;
-    --text-gray: #b3b3b3;
-    --player-purple: #1a0a2e;
-}
+/* ... Mantenha o que você já tinha e adicione/atualize estes campos ... */
 
-body {
-    margin: 0;
-    font-family: 'Segoe UI', sans-serif;
-    background-color: var(--bg-black);
-    color: white;
-    overflow: hidden;
-}
-
-.container { display: flex; height: 90vh; }
-
-.sidebar {
-    width: 240px;
-    background-color: #000;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-}
-
-.logo {
-    font-size: 26px;
-    font-weight: bold;
-    margin-bottom: 30px;
-    color: var(--primary-purple);
+.add-music .dropbox-btn {
+    background: #0061ff; /* Azul do Dropbox */
+    margin-bottom: 15px;
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 10px;
 }
 
-.invert-icon { transform: rotate(180deg); }
-
-.sidebar ul { list-style: none; padding: 0; }
-.sidebar li { padding: 12px 0; color: var(--text-gray); cursor: pointer; font-weight: 600; }
-.sidebar li:hover, .sidebar li.active { color: white; }
-
-.add-music {
-    margin-top: auto;
-    background: #181818;
-    padding: 15px;
-    border-radius: 10px;
-    border: 1px solid #333;
+.add-music .dropbox-btn:hover {
+    background: #004ecc;
 }
 
-.add-music input {
-    width: 90%;
-    margin-bottom: 10px;
-    background: #282828;
-    border: 1px solid #444;
-    padding: 8px;
-    color: white;
-    border-radius: 5px;
+.divider {
+    text-align: center;
+    font-size: 10px;
+    color: var(--text-gray);
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    position: relative;
 }
 
+.divider::before, .divider::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 20%;
+    height: 1px;
+    background: #333;
+}
+
+.divider::before { left: 0; }
+.divider::after { right: 0; }
+
+/* Ajuste no botão de adicionar manual */
 .add-music button {
     background: var(--primary-purple);
     color: white;
@@ -67,45 +45,12 @@ body {
     border-radius: 20px;
     font-weight: bold;
     cursor: pointer;
+    transition: 0.3s;
 }
 
-.main-content {
-    flex: 1;
-    background: linear-gradient(to bottom, #2d134d, var(--bg-dark));
-    padding: 20px;
-    overflow-y: auto;
-}
-
-.song-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-bottom: 5px;
-    transition: 0.2s;
-}
-
-.song-item:hover { background-color: rgba(255,255,255,0.1); }
-
-.player-bar {
-    height: 10vh;
-    background-color: var(--player-purple);
-    border-top: 2px solid var(--primary-purple);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 20px;
-}
-
-.play-btn { font-size: 35px; background: none; border: none; color: white; cursor: pointer; }
-.progress-container { width: 40%; }
-
-#progress, #volume {
-    width: 100%;
-    accent-color: var(--primary-purple);
-    cursor: pointer;
+.add-music button:hover {
+    opacity: 0.8;
+    transform: scale(1.02);
 }
 
 .song-info p { margin: 0; font-weight: bold; }
