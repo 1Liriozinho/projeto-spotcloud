@@ -6,14 +6,14 @@ const playIcon = document.getElementById('play-icon');
 window.onload = () => {
     renderPlaylist();
 
-    // Colocamos o listener aqui dentro para garantir que o HTML carregou todo
+
     const dbBtn = document.getElementById('db-chooser-btn');
     if (dbBtn) {
         dbBtn.addEventListener('click', function() {
             Dropbox.choose({
                 success: function(files) {
                     files.forEach(function(file) {
-                        // Link direto para streaming sem bloqueio
+                       
                         const directUrl = file.link.replace('www.dropbox.com', 'dl.dropboxusercontent.com');
                         
                         songs.push({ 
@@ -37,7 +37,7 @@ function addMusic() {
 
     if (!title || !url) return alert("Preencha o nome e o link!");
 
-    // Google Drive
+ 
     if (url.includes("drive.google.com")) {
         const fileId = url.match(/[-\w]{25,}/);
         if (fileId) {
@@ -45,7 +45,7 @@ function addMusic() {
         }
     }
 
-    // Dropbox Manual
+
     if (url.includes("dropbox.com")) {
         url = url.replace("www.dropbox.com", "dl.dropboxusercontent.com")
                  .replace("?dl=0", "?raw=1")
@@ -68,7 +68,7 @@ function renderPlaylist() {
     const container = document.getElementById('playlist');
     container.innerHTML = '';
     songs.forEach((song, index) => {
-        // Marcamos a música que está tocando agora com uma classe CSS opcional
+  
         const isActive = index === currentSongIndex ? 'active-song' : '';
         
         container.innerHTML += `
@@ -97,7 +97,7 @@ function playSong(index) {
         alert("O acesso foi negado. Se for Dropbox, use o botão azul.");
     });
 
-    renderPlaylist(); // Atualiza a lista para mostrar qual está tocando
+    renderPlaylist(); 
 }
 
 function togglePlay() {
