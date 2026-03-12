@@ -6,7 +6,7 @@
     --player-purple: #1a0a2e;
 }
 
-/* 1. RESET ESSENCIAL - Impede quebras de layout */
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -17,11 +17,11 @@ body {
     font-family: 'Segoe UI', sans-serif;
     background-color: var(--bg-black);
     color: white;
-    overflow: hidden; /* Impede scroll na página toda */
+    overflow: hidden; 
     height: 100vh;
 }
 
-/* 2. ESTRUTURA PRINCIPAL */
+
 .container { 
     display: flex; 
     height: 90vh; 
@@ -33,7 +33,7 @@ body {
     padding: 20px;
     display: flex;
     flex-direction: column;
-    flex-shrink: 0; /* Garante que ela não encolha */
+    flex-shrink: 0; 
     height: 100%;
 }
 
@@ -41,12 +41,12 @@ body {
     flex: 1;
     background: linear-gradient(to bottom, #2d134d, var(--bg-dark));
     padding: 20px;
-    overflow-y: auto; /* Scroll apenas na playlist */
+    overflow-y: auto; 
 }
 
-/* 3. ADICIONAR MÚSICA (SIDEBAR) */
+
 .add-music {
-    margin-top: auto; /* Empurra para o fundo da sidebar */
+    margin-top: auto; 
     background: #181818;
     padding: 15px;
     border-radius: 10px;
@@ -59,7 +59,7 @@ body {
     text-align: center;
 }
 
-/* Botões da Sidebar */
+
 .dropbox-btn {
     background: #0061ff !important;
     color: white;
@@ -104,7 +104,7 @@ body {
     border-radius: 5px;
 }
 
-/* 4. PLAYLIST E ITENS */
+
 .song-item {
     display: flex;
     justify-content: space-between;
@@ -118,14 +118,14 @@ body {
 
 .song-item:hover { background-color: rgba(255,255,255,0.1); }
 
-/* Estilo para a música que está tocando agora */
+
 .active-song {
     background-color: rgba(138, 43, 226, 0.2);
     color: var(--primary-purple);
     border-left: 4px solid var(--primary-purple);
 }
 
-/* 5. PLAYER BAR (RODAPÉ) */
+
 .player-bar {
     height: 10vh;
     background-color: var(--player-purple);
