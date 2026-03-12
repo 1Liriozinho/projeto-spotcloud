@@ -40,6 +40,29 @@
                 <button onclick="addMusic()"><i class="fas fa-plus"></i> Adicionar</button>
             </div>
         </nav>
+        <nav class="sidebar">
+    <div class="logo">
+        <i class="fab fa-spotify invert-icon"></i> <span>SpotCloud</span>
+    </div>
+    <ul>
+        <li class="active"><i class="fas fa-home"></i> Início</li>
+        <li><i class="fas fa-search"></i> Buscar</li>
+    </ul>
+    
+    <div class="add-music">
+        <h3>Adicionar Música</h3>
+        
+        <button id="db-chooser-btn" class="dropbox-btn">
+            <i class="fab fa-dropbox"></i> Escolher do Dropbox
+        </button>
+        
+        <div class="divider">ou link direto</div>
+
+        <input type="text" id="songTitle" placeholder="Nome da Música">
+        <input type="text" id="songUrl" placeholder="Link (Direct ou Drive)">
+        <button onclick="addMusic()" class="add-btn"><i class="fas fa-plus"></i> Adicionar</button>
+    </div>
+</nav>
 
         <main class="main-content">
             <header>
