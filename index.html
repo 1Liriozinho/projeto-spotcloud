@@ -3,44 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SpotCloud - Player</title>
+    <title>SpotCloud - Seu Player</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script type="text/javascript" src="https://www.dropbox.com/static/api/2/dropins.js" id="dropboxjs" data-app-key="gs4pc3ktafwjja7"></script>
 </head>
 <body>
-
     <div class="container">
         <nav class="sidebar">
-            <div class="logo">
-                <i class="fab fa-spotify invert-icon"></i> <span>SpotCloud</span>
-            </div>
+            <div class="logo"><i class="fab fa-spotify invert-icon"></i> SpotCloud</div>
             <ul>
                 <li class="active"><i class="fas fa-home"></i> Início</li>
                 <li><i class="fas fa-search"></i> Buscar</li>
             </ul>
-            
             <div class="add-music">
                 <h3>Adicionar Música</h3>
-                <button id="db-chooser-btn" class="dropbox-btn">
-                    <i class="fab fa-dropbox"></i> Dropbox
-                </button>
-                
-                <div class="divider">ou link direto</div>
-
-                <input type="text" id="songTitle" placeholder="Nome da Música">
-                <input type="text" id="songUrl" placeholder="Link direto .mp3">
-                <button onclick="addMusic()" class="add-btn"><i class="fas fa-plus"></i> Adicionar</button>
+                <button id="db-chooser-btn" class="dropbox-btn"><i class="fab fa-dropbox"></i> Dropbox</button>
+                <div class="divider">ou</div>
+                <input type="text" id="songTitle" placeholder="Nome">
+                <input type="text" id="songUrl" placeholder="Link">
+                <button onclick="addMusic()" class="add-btn">Adicionar</button>
             </div>
         </nav>
-
         <main class="main-content">
             <header>
-                <h1>Minha Playlist</h1>
+                <h1>Sua Playlist</h1>
                 <div class="search-container">
                     <div class="search-box">
                         <i class="fas fa-search"></i>
-                        <input type="text" id="searchInput" placeholder="Procurar músicas no Jamendo...">
+                        <input type="text" id="searchInput" placeholder="Buscar músicas completas no Jamendo...">
                         <button onclick="searchMusic()" class="search-btn">Buscar</button>
                     </div>
                     <div id="search-results" class="search-results-overlay"></div>
@@ -49,7 +40,6 @@
             <div id="playlist" class="playlist"></div>
         </main>
     </div>
-
     <footer class="player-bar">
         <div class="now-playing">
             <div class="song-info">
@@ -57,7 +47,22 @@
                 <small id="current-artist">SpotCloud Player</small>
             </div>
         </div>
-
         <div class="player-controls">
             <div class="buttons">
-                <button onclick
+                <button onclick="prevSong()"><i class="fas fa-step-backward"></i></button>
+                <button class="play-btn" onclick="togglePlay()"><i id="play-icon" class="fas fa-play-circle"></i></button>
+                <button onclick="nextSong()"><i class="fas fa-step-forward"></i></button>
+            </div>
+            <div class="progress-container">
+                <input type="range" id="progress" value="0" max="100" oninput="seek()">
+            </div>
+        </div>
+        <div class="volume-control">
+            <i class="fas fa-volume-up"></i>
+            <input type="range" id="volume" value="100" max="100" oninput="changeVolume()">
+        </div>
+    </footer>
+    <audio id="audio-player" crossorigin="anonymous"></audio>
+    <script src="script.js"></script>
+</body>
+</html>
