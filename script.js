@@ -3,28 +3,33 @@ let currentSongIndex = 0;
 const audio = document.getElementById('audio-player');
 const playIcon = document.getElementById('play-icon');
 
-window.onload = () => renderPlaylist();
+window.onload = () => {
+    renderPlaylist();
 
-// --- CONFIGURAÇÃO DO BOTÃO DROPBOX ---
-document.getElementById('db-chooser-btn').addEventListener('click', function() {
-    Dropbox.choose({
-        success: function(files) {
-            files.forEach(function(file) {
-                // O Dropbox Chooser com linkType: "direct" já resolve 99% dos problemas de CORS
-                const directUrl = file.link.replace('www.dropbox.com', 'dl.dropboxusercontent.com');
-                
-                songs.push({ 
-                    title: file.name.replace('.mp3', ''), 
-                    url: directUrl 
-                });
+    // Colocamos o listener aqui dentro para garantir que o HTML carregou todo
+    const dbBtn = document.getElementById('db-chooser-btn');
+    if (dbBtn) {
+        dbBtn.addEventListener('click', function() {
+            Dropbox.choose({
+                success: function(files) {
+                    files.forEach(function(file) {
+                        // Link direto para streaming sem bloqueio
+                        const directUrl = file.link.replace('www.dropbox.com', 'dl.dropboxusercontent.com');
+                        
+                        songs.push({ 
+                            title: file.name.replace('.mp3', ''), 
+                            url: directUrl 
+                        });
+                    });
+                    saveAndRender();
+                },
+                linkType: "direct",
+                multiselect: true,
+                extensions: ['.mp3', '.wav'],
             });
-            saveAndRender();
-        },
-        linkType: "direct",
-        multiselect: true,
-        extensions: ['.mp3', '.wav'],
-    });
-});
+        });
+    }
+};
 
 function addMusic() {
     const title = document.getElementById('songTitle').value;
@@ -32,7 +37,7 @@ function addMusic() {
 
     if (!title || !url) return alert("Preencha o nome e o link!");
 
-    // Conversão de Link do Google Drive
+    // Google Drive
     if (url.includes("drive.google.com")) {
         const fileId = url.match(/[-\w]{25,}/);
         if (fileId) {
@@ -40,9 +45,11 @@ function addMusic() {
         }
     }
 
-    // Conversão manual caso o usuário cole link do Dropbox no input
+    // Dropbox Manual
     if (url.includes("dropbox.com")) {
-        url = url.replace("www.dropbox.com", "dl.dropboxusercontent.com").replace("?dl=0", "?raw=1");
+        url = url.replace("www.dropbox.com", "dl.dropboxusercontent.com")
+                 .replace("?dl=0", "?raw=1")
+                 .replace("?dl=1", "?raw=1");
     }
 
     songs.push({ title, url });
@@ -61,10 +68,15 @@ function renderPlaylist() {
     const container = document.getElementById('playlist');
     container.innerHTML = '';
     songs.forEach((song, index) => {
+        // Marcamos a música que está tocando agora com uma classe CSS opcional
+        const isActive = index === currentSongIndex ? 'active-song' : '';
+        
         container.innerHTML += `
-            <div class="song-item" onclick="playSong(${index})">
+            <div class="song-item ${isActive}" onclick="playSong(${index})">
                 <span><i class="fas fa-music" style="margin-right:10px"></i> ${song.title}</span>
-                <button onclick="removeSong(event, ${index})" style="background:none; border:none; color:gray; cursor:pointer"><i class="fas fa-trash"></i></button>
+                <button onclick="removeSong(event, ${index})" style="background:none; border:none; color:gray; cursor:pointer">
+                    <i class="fas fa-trash"></i>
+                </button>
             </div>
         `;
     });
@@ -82,8 +94,10 @@ function playSong(index) {
         playIcon.className = "fas fa-pause-circle";
     }).catch(err => {
         console.error("Erro ao tocar:", err);
-        alert("O acesso foi negado. Se for Dropbox, use o botão azul. Se for Drive, verifique se o arquivo é público.");
+        alert("O acesso foi negado. Se for Dropbox, use o botão azul.");
     });
+
+    renderPlaylist(); // Atualiza a lista para mostrar qual está tocando
 }
 
 function togglePlay() {
@@ -117,8 +131,7 @@ function prevSong() {
 
 function seek() {
     if (!audio.duration) return;
-    const seekTo = audio.duration * (document.getElementById('progress').value / 100);
-    audio.currentTime = seekTo;
+    audio.currentTime = audio.duration * (document.getElementById('progress').value / 100);
 }
 
 function changeVolume() {
@@ -127,8 +140,7 @@ function changeVolume() {
 
 audio.ontimeupdate = () => {
     if (audio.duration) {
-        const progress = (audio.currentTime / audio.duration) * 100;
-        document.getElementById('progress').value = progress || 0;
+        document.getElementById('progress').value = (audio.currentTime / audio.duration) * 100;
     }
 };
 
