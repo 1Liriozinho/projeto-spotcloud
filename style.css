@@ -56,7 +56,19 @@
     cursor: pointer;
     border-bottom: 1px solid #222;
 }
-
+.search-results-overlay {
+    position: absolute;
+    top: 55px;
+    left: 0;
+    right: 0;
+    background: #181818;
+    border: 1px solid #333;
+    border-radius: 8px;
+    z-index: 9999; /* Garante que fique na frente de tudo */
+    display: none;
+    max-height: 300px;
+    overflow-y: auto;
+}
 .search-result-item:hover { background: #282828; }
 .search-result-item img { width: 45px; height: 45px; border-radius: 4px; object-fit: cover; }
 .search-info { flex: 1; }
