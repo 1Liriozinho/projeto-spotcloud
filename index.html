@@ -1,18 +1,13 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <head>
-    <script type="text/javascript" 
-            src="https://www.dropbox.com/static/api/2/dropins.js" 
-            id="dropboxjs" 
-            data-app-key="gs4pc3ktafwjja7">
-    </script>
-</head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SpotCloud - Seu Player</title>
+    
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
     <script type="text/javascript" src="https://www.dropbox.com/static/api/2/dropins.js" id="dropboxjs" data-app-key="gs4pc3ktafwjja7"></script>
 </head>
 <body>
@@ -29,6 +24,7 @@
             
             <div class="add-music">
                 <h3>Adicionar Música</h3>
+                
                 <button id="db-chooser-btn" class="dropbox-btn">
                     <i class="fab fa-dropbox"></i> Escolher do Dropbox
                 </button>
@@ -37,32 +33,9 @@
 
                 <input type="text" id="songTitle" placeholder="Nome da Música">
                 <input type="text" id="songUrl" placeholder="Link (Direct ou Drive)">
-                <button onclick="addMusic()"><i class="fas fa-plus"></i> Adicionar</button>
+                <button onclick="addMusic()" class="add-btn"><i class="fas fa-plus"></i> Adicionar</button>
             </div>
         </nav>
-        <nav class="sidebar">
-    <div class="logo">
-        <i class="fab fa-spotify invert-icon"></i> <span>SpotCloud</span>
-    </div>
-    <ul>
-        <li class="active"><i class="fas fa-home"></i> Início</li>
-        <li><i class="fas fa-search"></i> Buscar</li>
-    </ul>
-    
-    <div class="add-music">
-        <h3>Adicionar Música</h3>
-        
-        <button id="db-chooser-btn" class="dropbox-btn">
-            <i class="fab fa-dropbox"></i> Escolher do Dropbox
-        </button>
-        
-        <div class="divider">ou link direto</div>
-
-        <input type="text" id="songTitle" placeholder="Nome da Música">
-        <input type="text" id="songUrl" placeholder="Link (Direct ou Drive)">
-        <button onclick="addMusic()" class="add-btn"><i class="fas fa-plus"></i> Adicionar</button>
-    </div>
-</nav>
 
         <main class="main-content">
             <header>
@@ -95,9 +68,3 @@
             <i class="fas fa-volume-up"></i>
             <input type="range" id="volume" value="100" max="100" oninput="changeVolume()">
         </div>
-    </footer>
-
-    <audio id="audio-player" crossorigin="anonymous"></audio>
-    <script src="script.js"></script>
-</body>
-</html>
